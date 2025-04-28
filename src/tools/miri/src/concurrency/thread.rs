@@ -11,6 +11,7 @@ use rustc_const_eval::CTRL_C_RECEIVED;
 use rustc_data_structures::fx::FxHashMap;
 use rustc_hir::def_id::DefId;
 use rustc_index::{Idx, IndexVec};
+use rustc_log::enter_trace_span;
 use rustc_middle::mir::Mutability;
 use rustc_middle::ty::layout::TyAndLayout;
 use rustc_span::Span;
@@ -703,6 +704,8 @@ impl<'tcx> ThreadManager<'tcx> {
     /// long as we can and switch only when we have to (the active thread was
     /// blocked, terminated, or has explicitly asked to be preempted).
     fn schedule(&mut self, clock: &MonotonicClock) -> InterpResult<'tcx, SchedulingAction> {
+        let _trace_span = enter_trace_span!("schedule");
+
         // This thread and the program can keep going.
         if self.threads[self.active_thread].state.is_enabled() && !self.yield_active_thread {
             // The currently active thread is still enabled, just continue with it.
@@ -1154,6 +1157,7 @@ pub trait EvalContextExt<'tcx>: crate::MiriInterpCxExt<'tcx> {
             }
             match this.machine.threads.schedule(&this.machine.monotonic_clock)? {
                 SchedulingAction::ExecuteStep => {
+                    let _trace_span = enter_trace_span!("Scheduler: executing one step");
                     if !this.step()? {
                         // See if this thread can do something else.
                         match this.run_on_stack_empty()? {
@@ -1164,9 +1168,12 @@ pub trait EvalContextExt<'tcx>: crate::MiriInterpCxExt<'tcx> {
                     }
                 }
                 SchedulingAction::ExecuteTimeoutCallback => {
+                    let _trace_span = enter_trace_span!("Scheduler: ExecuteTimeoutCallback");
                     this.run_timeout_callback()?;
                 }
                 SchedulingAction::Sleep(duration) => {
+                    let _trace_span =
+                        enter_trace_span!("Scheduler: sleeping", "duration = {:?}", duration);
                     this.machine.monotonic_clock.sleep(duration);
                 }
             }

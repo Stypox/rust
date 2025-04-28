@@ -5,6 +5,7 @@
 use either::Either;
 use rustc_abi::{FIRST_VARIANT, FieldIdx};
 use rustc_index::IndexSlice;
+use rustc_log::enter_trace_span;
 use rustc_middle::ty::layout::FnAbiOf;
 use rustc_middle::ty::{self, Instance, Ty};
 use rustc_middle::{bug, mir, span_bug};
@@ -75,6 +76,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
     ///
     /// This does NOT move the statement counter forward, the caller has to do that!
     pub fn eval_statement(&mut self, stmt: &mir::Statement<'tcx>) -> InterpResult<'tcx> {
+        let _span = enter_trace_span!("eval_statement", "{:?}", stmt);
         info!("{:?}", stmt);
 
         use rustc_middle::mir::StatementKind::*;
@@ -160,6 +162,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
         rvalue: &mir::Rvalue<'tcx>,
         place: mir::Place<'tcx>,
     ) -> InterpResult<'tcx> {
+        let _span = enter_trace_span!("eval_rvalue_into_place");
         let dest = self.eval_place(place)?;
         // FIXME: ensure some kind of non-aliasing between LHS and RHS?
         // Also see https://github.com/rust-lang/rust/issues/68364.
@@ -384,6 +387,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
         &self,
         op: &mir::Operand<'tcx>,
     ) -> InterpResult<'tcx, FnArg<'tcx, M::Provenance>> {
+        let _span = enter_trace_span!("eval_fn_call_argument");
         interp_ok(match op {
             mir::Operand::Copy(_) | mir::Operand::Constant(_) => {
                 // Make a regular copy.
@@ -422,6 +426,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
         func: &mir::Operand<'tcx>,
         args: &[Spanned<mir::Operand<'tcx>>],
     ) -> InterpResult<'tcx, EvaluatedCalleeAndArgs<'tcx, M>> {
+        let _span = enter_trace_span!("eval_callee_and_args");
         let func = self.eval_operand(func, None)?;
         let args = args
             .iter()
@@ -457,6 +462,7 @@ impl<'tcx, M: Machine<'tcx>> InterpCx<'tcx, M> {
     }
 
     fn eval_terminator(&mut self, terminator: &mir::Terminator<'tcx>) -> InterpResult<'tcx> {
+        let _span = enter_trace_span!("eval_terminator");
         info!("{:?}", terminator.kind);
 
         use rustc_middle::mir::TerminatorKind::*;

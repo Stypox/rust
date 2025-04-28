@@ -35,3 +35,83 @@ pub(crate) fn setup_tracing() -> (TracingGuard, tracing_tracy::TracyLayer) {
 pub(crate) fn setup_tracing() -> (TracingGuard, tracing_subscriber::layer::Identity) {
     (TracingGuard, tracing_subscriber::layer::Identity::default())
 }
+
+#[cfg(any(feature = "tracing_chrome", feature = "tracing_tracy"))]
+#[macro_export]
+macro_rules! enter_trace_span {
+    ($($tt:tt)*) => {
+        tracing::info_span!($($tt)*).entered()
+    }
+}
+
+#[cfg(not(any(feature = "tracing_chrome", feature = "tracing_tracy")))]
+#[macro_export]
+macro_rules! enter_trace_span {
+    ($($tt:tt)*) => {
+        ()
+    };
+}
+
+#[cfg(any(feature = "tracing_chrome", feature = "tracing_tracy"))]
+#[macro_export]
+macro_rules! enter_debug_span {
+    ($($tt:tt)*) => {
+        tracing::info_span!($($tt)*).entered()
+    }
+}
+
+#[cfg(not(any(feature = "tracing_chrome", feature = "tracing_tracy")))]
+#[macro_export]
+macro_rules! enter_debug_span {
+    ($($tt:tt)*) => {
+        ()
+    };
+}
+
+#[cfg(any(feature = "tracing_chrome", feature = "tracing_tracy"))]
+#[macro_export]
+macro_rules! enter_info_span {
+    ($($tt:tt)*) => {
+        tracing::info_span!($($tt)*).entered()
+    }
+}
+
+#[cfg(not(any(feature = "tracing_chrome", feature = "tracing_tracy")))]
+#[macro_export]
+macro_rules! enter_info_span {
+    ($($tt:tt)*) => {
+        ()
+    };
+}
+
+#[cfg(any(feature = "tracing_chrome", feature = "tracing_tracy"))]
+#[macro_export]
+macro_rules! enter_warn_span {
+    ($($tt:tt)*) => {
+        tracing::info_span!($($tt)*).entered()
+    }
+}
+
+#[cfg(not(any(feature = "tracing_chrome", feature = "tracing_tracy")))]
+#[macro_export]
+macro_rules! enter_warn_span {
+    ($($tt:tt)*) => {
+        ()
+    };
+}
+
+#[cfg(any(feature = "tracing_chrome", feature = "tracing_tracy"))]
+#[macro_export]
+macro_rules! enter_error_span {
+    ($($tt:tt)*) => {
+        tracing::info_span!($($tt)*).entered()
+    }
+}
+
+#[cfg(not(any(feature = "tracing_chrome", feature = "tracing_tracy")))]
+#[macro_export]
+macro_rules! enter_error_span {
+    ($($tt:tt)*) => {
+        ()
+    };
+}

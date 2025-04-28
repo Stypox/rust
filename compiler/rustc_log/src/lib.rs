@@ -40,10 +40,13 @@ use std::fmt::{self, Display};
 use std::io::{self, IsTerminal};
 
 use tracing_core::{Event, Subscriber};
+use tracing_subscriber::Layer;
 use tracing_subscriber::filter::{Directive, EnvFilter, LevelFilter};
 use tracing_subscriber::fmt::FmtContext;
 use tracing_subscriber::fmt::format::{self, FormatEvent, FormatFields};
 use tracing_subscriber::layer::SubscriberExt;
+pub use tracing_utils::TracingGuard;
+use tracing_utils::setup_tracing;
 
 /// The values of all the environment variables that matter for configuring a logger.
 /// Errors are explicitly preserved so that we can share error handling.
@@ -72,7 +75,7 @@ impl LoggerConfig {
 }
 
 /// Initialize the logger with the given values for the filter, coloring, and other options env variables.
-pub fn init_logger(cfg: LoggerConfig) -> Result<(), Error> {
+pub fn init_logger(cfg: LoggerConfig) -> Result<TracingGuard, Error> {
     let filter = match cfg.filter {
         Ok(env) => EnvFilter::new(env),
         _ => EnvFilter::default().add_directive(Directive::from(LevelFilter::WARN)),
@@ -125,7 +128,17 @@ pub fn init_logger(cfg: LoggerConfig) -> Result<(), Error> {
         Err(_) => {} // no wraptree
     }
 
-    let subscriber = tracing_subscriber::Registry::default().with(filter).with(layer);
+    // tracing is only enabled when one of the "tracing-chrome" or "tracing-tracy" features are
+    // enabled, in other cases this function does nothing
+    // TODO maybe allow choosing this at runtime, too?
+    let (tracing_guard, tracing_layer) = setup_tracing();
+
+    let subscriber = tracing_subscriber::Registry::default()
+        .with(layer.with_filter(filter))
+        // the filter only applies to the logs printed to stdout, not to the trace file produced
+        // when tracing features are enabled, which should contain everything
+        .with(tracing_layer);
+
     match cfg.backtrace {
         Ok(backtrace_target) => {
             let fmt_layer = tracing_subscriber::fmt::layer()
@@ -140,7 +153,7 @@ pub fn init_logger(cfg: LoggerConfig) -> Result<(), Error> {
         }
     };
 
-    Ok(())
+    Ok(tracing_guard)
 }
 
 struct BacktraceFormatter {

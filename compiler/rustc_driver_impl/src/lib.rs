@@ -49,6 +49,7 @@ use rustc_index as _;
 use rustc_interface::util::{self, get_codegen_backend};
 use rustc_interface::{Linker, create_and_enter_global_ctxt, interface, passes};
 use rustc_lint::unerased_lint_store;
+use rustc_log::TracingGuard;
 use rustc_metadata::creader::MetadataLoader;
 use rustc_metadata::locator;
 use rustc_middle::ty::TyCtxt;
@@ -1492,16 +1493,17 @@ fn report_ice(
 
 /// This allows tools to enable rust logging without having to magically match rustc's
 /// tracing crate version.
-pub fn init_rustc_env_logger(early_dcx: &EarlyDiagCtxt) {
-    init_logger(early_dcx, rustc_log::LoggerConfig::from_env("RUSTC_LOG"));
+pub fn init_rustc_env_logger(early_dcx: &EarlyDiagCtxt) -> TracingGuard {
+    init_logger(early_dcx, rustc_log::LoggerConfig::from_env("RUSTC_LOG"))
 }
 
 /// This allows tools to enable rust logging without having to magically match rustc's
 /// tracing crate version. In contrast to `init_rustc_env_logger` it allows you to choose
 /// the values directly rather than having to set an environment variable.
-pub fn init_logger(early_dcx: &EarlyDiagCtxt, cfg: rustc_log::LoggerConfig) {
-    if let Err(error) = rustc_log::init_logger(cfg) {
-        early_dcx.early_fatal(error.to_string());
+pub fn init_logger(early_dcx: &EarlyDiagCtxt, cfg: rustc_log::LoggerConfig) -> TracingGuard {
+    match rustc_log::init_logger(cfg) {
+        Err(error) => early_dcx.early_fatal(error.to_string()),
+        Ok(guard) => guard,
     }
 }
 
@@ -1527,7 +1529,8 @@ pub fn main() -> ! {
 
     let early_dcx = EarlyDiagCtxt::new(ErrorOutputType::default());
 
-    init_rustc_env_logger(&early_dcx);
+    // TODO remove _guard or remove this TODO after solving the warning some other way
+    let _guard = init_rustc_env_logger(&early_dcx);
     signal_handler::install();
     let mut callbacks = TimePassesCallbacks::default();
     install_ice_hook(DEFAULT_BUG_REPORT_URL, |_| ());

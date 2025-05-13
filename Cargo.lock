@@ -2287,6 +2287,7 @@ dependencies = [
  "rand 0.9.1",
  "regex",
  "rustc_version",
+ "serde_json",
  "smallvec",
  "tempfile",
  "tikv-jemalloc-sys",

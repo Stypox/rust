@@ -1,0 +1,15 @@
+[package]
+name = "tracing-core"
+version = "0.1.30"
+edition = "2021"
+
+[package.metadata.rust-analyzer]
+rustc_private = true
+
+[dependencies]
+
+[features]
+std = []
+
+[dev-dependencies]
+rustc_version = "0.4"

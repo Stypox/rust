@@ -29,6 +29,7 @@ members = [
   "src/tools/llvm-bitcode-linker",
   "src/tools/miri",
   "src/tools/miri/cargo-miri",
+  "src/tools/miri/shim_tracing",
   "src/tools/miropt-test-tools",
   "src/tools/opt-dist",
   "src/tools/remote-test-client",
@@ -89,3 +90,10 @@ codegen-units = 1
 # FIXME: LTO cannot be enabled for binaries in a workspace
 # <https://github.com/rust-lang/cargo/issues/9330>
 # lto = true
+
+[replace]
+"tracing-core:0.1.30" = { path = "src/tools/miri/shim_tracing" }
+#"tracing-core:0.1.33" = { path = "src/tools/miri/shim_tracing" }
+
+# [patch.crates-io]
+# tracing-core = { path = "src/tools/miri/shim_tracing", version = "0.1.33" }

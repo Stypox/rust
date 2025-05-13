@@ -2291,6 +2291,7 @@ dependencies = [
  "smallvec",
  "tempfile",
  "tikv-jemalloc-sys",
+ "tracing-core",
  "ui_test",
  "windows-sys 0.59.0",
 ]
@@ -5363,11 +5364,8 @@ dependencies = [
 [[package]]
 name = "tracing-core"
 version = "0.1.30"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "24eb03ba0eab1fd845050058ce5e616558e8f8d8fca633e6b163fe25c797213a"
 dependencies = [
- "once_cell",
- "valuable",
+ "rustc_version",
 ]
 
 [[package]]
@@ -5672,12 +5670,6 @@ checksum = "458f7a779bf54acc9f347480ac654f68407d3aab21269a6e3c9f922acd9e2da9"
 dependencies = [
  "getrandom 0.3.2",
 ]
-
-[[package]]
-name = "valuable"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65"
 
 [[package]]
 name = "vcpkg"

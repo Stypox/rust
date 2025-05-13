@@ -686,7 +686,7 @@ checksum = "2ddd8d5bfda1e11a501d0a7303f3bfed9aa632ebdb859be40d0fd70478ed70d5"
 dependencies = [
  "once_cell",
  "owo-colors 4.2.0",
- "tracing-core",
+ "tracing-core 0.1.30",
  "tracing-error",
 ]
 
@@ -2291,6 +2291,7 @@ dependencies = [
  "smallvec",
  "tempfile",
  "tikv-jemalloc-sys",
+ "tracing-core 0.1.30",
  "ui_test",
  "windows-sys 0.59.0",
 ]
@@ -3955,7 +3956,7 @@ name = "rustc_log"
 version = "0.0.0"
 dependencies = [
  "tracing",
- "tracing-core",
+ "tracing-core 0.1.30",
  "tracing-subscriber",
  "tracing-tree",
 ]
@@ -5346,7 +5347,7 @@ dependencies = [
  "cfg-if",
  "pin-project-lite",
  "tracing-attributes",
- "tracing-core",
+ "tracing-core 0.1.30",
 ]
 
 [[package]]
@@ -5359,6 +5360,10 @@ dependencies = [
  "quote",
  "syn 2.0.101",
 ]
+
+[[package]]
+name = "tracing-core"
+version = "0.1.0"
 
 [[package]]
 name = "tracing-core"
@@ -5388,7 +5393,7 @@ checksum = "ee855f1f400bd0e5c02d150ae5de3840039a3f54b025156404e34c23c03f47c3"
 dependencies = [
  "log",
  "once_cell",
- "tracing-core",
+ "tracing-core 0.1.30",
 ]
 
 [[package]]
@@ -5406,7 +5411,7 @@ dependencies = [
  "smallvec",
  "thread_local",
  "tracing",
- "tracing-core",
+ "tracing-core 0.1.30",
  "tracing-log",
 ]
 
@@ -5417,7 +5422,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b56c62d2c80033cb36fae448730a2f2ef99410fe3ecbffc916681a32f6807dbe"
 dependencies = [
  "nu-ansi-term 0.50.1",
- "tracing-core",
+ "tracing-core 0.1.30",
  "tracing-log",
  "tracing-subscriber",
 ]

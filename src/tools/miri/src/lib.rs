@@ -56,7 +56,6 @@
 // Some "regular" crates we want to share with rustc
 extern crate either;
 extern crate tracing;
-extern crate tracing_core;
 extern crate tracing_subscriber;
 
 // The rustc crates we need
